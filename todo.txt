@@ -1,0 +1,6 @@
+//TODO: Add an inferior limit for the grid building
+//TODO: Sidebar should have a relative height plus margins
+//TODO: Canvas should resize itself relative to viewport
+//TODO: Maybe rewrite export functionality
+//TODO: Add import feature
+//TODO: Implement responsiveness (for different devices)

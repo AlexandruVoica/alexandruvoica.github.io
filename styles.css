@@ -1,0 +1,121 @@
+html,
+body {
+    font-family: Arial;
+    height: 100%;
+    width: 100%;
+}
+
+#header {
+  background-color: lightgray;
+  height: 100%;
+  width: 600px;
+  bottom: 15px;
+  margin: 0;
+  border-radius: 4rem;
+  box-shadow: 10px 10px 30px 1px rgba(94,94,94,1);
+  text-align: center;
+  float: left;
+}
+
+#canvas_space {
+  height: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.title {
+  text-shadow: 3px 3px rgba(80, 80, 80, 0.5);
+}
+
+h1 {
+    font-family: Monoton;
+    font-size: 70px;
+    margin: 0.2em;
+}
+
+h2 {
+    margin: 1em 0 0.25em;
+}
+
+h2:first-of-type {
+    margin-top: 0.5em;
+}
+
+#canvas_header {
+  color: lightgray;
+}
+
+table,
+tr,
+td {
+    border: 1px solid gray;
+}
+
+table {
+    border-collapse: collapse;
+    margin: 0 auto 30px auto;
+    box-shadow: 5px 5px 20px 1px rgba(94,94,94,1);
+}
+
+tr {
+    height: 20px;
+}
+
+td {
+    width: 20px;
+}
+
+input[type=number] {
+    width: 6em;
+    text-align: center;
+    -moz-appearance:textfield;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+#colorString {
+  color: #FFFFFF;
+  background: #000000;
+}
+
+input[type="submit"] {
+  border: 1px solid #000000;
+  padding: 2px 5px 2px 5px;
+  background: #FFFFFF;
+  color: #000000;
+}
+
+input[type="submit"]:hover {
+  color: #FFFFFF;
+  background: #000000;
+}
+
+input[disabled="true"] {
+  border: 1px solid gray;
+  color: gray;
+}
+
+input[disabled="true"]:hover {
+  border: 1px solid gray;
+  background: #FFFFFF;
+  color: gray;
+}
+
+input[type="color"] {
+  border: 1px solid #000000;
+  padding: 2px 5px 2px 5px;
+  background: #FFFFFF;
+  color: #000000;
+}
+
+textarea {
+  display: block;
+  position: relative;
+  margin: 10px auto 0 auto;
+}
