@@ -1,15 +1,20 @@
-// Select color input
+// Global variables declaration
+
+// By default, start with the color black
 var selectedColor = '#000000';
+var gridHeight = 0;
+var gridWidth = 0;
+
+// Select color event listener
+
 $('#colorPicker').change(function(event) {
   selectedColor = event.target.value;
   $('#colorString').text(selectedColor.toUpperCase());
   $('#colorString').css('background', selectedColor);
 });
 
-var gridHeight = 0;
-var gridWidth = 0;
-
 // When size is submitted by the user, call makeGrid()
+
 $('#submit_button').click(function(event) {
   event.preventDefault();
   gridHeight = $('#input_height').val();
@@ -31,10 +36,10 @@ function makeGrid() {
   // Delete previous canvas
   $('#pixel_canvas').children().remove();
   // Create canvas grid
-  for(var row = 0; row < gridHeight; row ++) {
+  for(let row = 0; row < gridHeight; row ++) {
     $('#pixel_canvas').append('<tr></tr>');
   }
-  for(var column = 0; column < gridWidth; column++) {
+  for(let column = 0; column < gridWidth; column++) {
     $('#pixel_canvas > tr').append('<td></td>');
   }
   $('#export_button').removeAttr('disabled');
@@ -71,17 +76,52 @@ $('table').on('mouseenter', 'td', function(event) {
 $('#export_button').on('click', function(event) {
   event.preventDefault();
   $('#save_functionality').children('textarea').remove();
-  $('#save_functionality').append('<textarea name="textarea" rows="10" cols="50"></textarea>');
-  var exportString = gridWidth + ' ' + gridHeight + ' ';
-  for (var i = 0; i < gridHeight; i ++) {
-    var row = $('#pixel_canvas').find('tr').eq(i);
-    for (var j = 0; j < gridWidth; j ++) {
-      var currentCell = '';
-      var currentColor = '';
-      currentCell = $(row).find('td').eq(j);
+  $('#save_functionality').append('<textarea name="textarea" rows="10" cols="50" readonly="true"></textarea>');
+  var exportString = gridWidth + '|' + gridHeight + '|';
+  for (let i = 0; i < gridHeight; i ++) {
+    let currentRow = $('#pixel_canvas').find('tr').eq(i);
+    for (let j = 0; j < gridWidth; j ++) {
+      let currentCell = '';
+      let currentColor = '';
+      currentCell = $(currentRow).find('td').eq(j);
       currentColor = $(currentCell).css('background-color');
-      exportString += currentColor + ' ';
+      exportString += currentColor + '|';
     }
   }
   $('#save_functionality').children('textarea').html(exportString);
+});
+
+// Import canvas by parsing a string
+var isTextareaVisible = false;
+$('#import_button').on('click', function(event) {
+  event.preventDefault();
+  if (isTextareaVisible === false) {
+    $('#save_functionality').children('textarea').remove();
+    $('#save_functionality').append('<textarea name="textarea" rows="10" cols="50">Copy import string here...</textarea>');
+    isTextareaVisible = true;
+  } else {
+    let importString = $('#save_functionality').children('textarea').val();
+    let parseString = importString.split('|');
+    gridWidth = parseString[0];
+    gridHeight = parseString[1];
+    let numberOfCells = parseString.length - 3;
+    if (numberOfCells != (gridWidth * gridHeight)) {
+      alert('Import string is not correct.');
+      return true;
+    }
+    makeGrid();
+    let readIndex = 2;
+    for (let i = 0; i < gridHeight; i ++) {
+      let currentRow = $('#pixel_canvas').find('tr').eq(i);
+      for (let j = 0; j < gridWidth; j ++) {
+        let currentCell = $(currentRow).find('td').eq(j);
+        let currentColor = parseString[readIndex];
+        $(currentCell).css('background-color', currentColor);
+        $(currentCell).css('border', currentColor);
+        $(currentCell).parent().css('border', currentColor);
+        readIndex ++;
+      }
+    }
+    isTextareaVisible = false;
+  }
 });

@@ -7,9 +7,9 @@
     <meta charset="utf-8">
 </head>
 <body>
-  <div id="header">
+<div class="container">
+  <div class="header">
     <h1 class="title">Pixel Art Maker</h1>
-
     <h2>Choose Grid Size</h2>
     <form id="sizePicker">
         Grid Height:
@@ -18,31 +18,33 @@
         <input type="number" id="input_width" name="width" min="1" value="20">
         <input type="submit" id="submit_button" value="Create grid">
     </form>
-    <p>The grid is <span id="get_height">20</span> by <span id="get_width">20</span>.</p>
-
+    <p>The grid is currently <span id="get_height">20</span> by <span id="get_width">20</span>.</p>
     <h2>Pick A Color</h2>
     <input type="color" id="colorPicker">
     <p><span id="colorString">#000000</span> has been selected!</p>
     <div id="toolbox">
       <h2>Toolbox</h2>
-      <img src="assets/eraser.png" alt="Eraser" width="40px">
-      <img src="assets/eraser.png" alt="Eraser" width="40px">
-      <img src="assets/eraser.png" alt="Eraser" width="40px">
+      <img class="tool_icon" src="assets/eraser.png" alt="Eraser tool" width="40px">
+      <img class="tool_icon" src="assets/filltool.png" alt="Fill tool" width="40px">
+      <img class="tool_icon" src="assets/cleartool.png" alt="Clear" width="40px">
+      <img class="tool_icon" src="assets/undo.png" alt="Undo" width="40px">
       <div id="save_functionality">
         <input type="submit" id="export_button" value="Export" disabled="true">
         <input type="submit" id="import_button" value="Import">
       </div>
     </div>
   </div>
-
-  <div id="canvas_space">
-    <h2 id="canvas_header">This is where the Design Canvas will be generated.</h2>
-    <table id="pixel_canvas">
-      <!--
-        The cells of the table will be appended here
-      -->
-    </table>
+  <div class="canvas_space">
+        <p id="canvas_header">This is where the Design Canvas will be generated.</p>
+      <div>
+        <table id="pixel_canvas">
+        <!--
+          The cells of the table will be appended here
+        -->
+        </table>
+      </div>
   </div>
+</div>
   <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
   <script src="designs.js"></script>
 </body>
