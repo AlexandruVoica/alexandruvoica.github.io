@@ -13,9 +13,9 @@
     <h2>Choose Grid Size</h2>
     <form id="sizePicker">
         Grid Height:
-        <input type="number" id="input_height" name="height" min="1" value="20">
+        <input type="number" id="input_height" name="height" min="5" value="20">
         Grid Width:
-        <input type="number" id="input_width" name="width" min="1" value="20">
+        <input type="number" id="input_width" name="width" min="5" value="20">
         <input type="submit" id="submit_button" value="Create grid">
     </form>
     <p>The grid is currently <span id="get_height">20</span> by <span id="get_width">20</span>.</p>
@@ -24,10 +24,31 @@
     <p><span id="colorString">#000000</span> has been selected!</p>
     <div id="toolbox">
       <h2>Toolbox</h2>
-      <img class="tool_icon" src="assets/eraser.png" alt="Eraser tool" width="40px">
-      <img class="tool_icon" src="assets/filltool.png" alt="Fill tool" width="40px">
-      <img class="tool_icon" src="assets/cleartool.png" alt="Clear" width="40px">
-      <img class="tool_icon" src="assets/undo.png" alt="Undo" width="40px">
+      <div class="tool">
+        <img class="tool_icon" src="assets/paintbrush.png" alt="Paint brush" width="40px">
+        <p class="tooltip">Paint brush</p>
+      </div>
+      <div class="tool">
+        <img class="tool_icon" src="assets/eraser.png" alt="Eraser tool" width="40px">
+        <p class="tooltip">Eraser</p>
+      </div>
+      <div class="tool">
+        <img class="tool_icon" src="assets/filltool.png" alt="Fill tool" width="40px">
+        <p class="tooltip">Fill tool</p>
+      </div>
+      <br>
+      <div class="tool">
+        <img class="tool_icon" src="assets/cleartool.png" alt="Clear" width="40px">
+        <p class="tooltip">Clear canvas</p>
+      </div>
+      <div class="tool">
+        <img class="tool_icon" src="assets/undo.png" alt="Undo" width="40px">
+        <p class="tooltip">Undo</p>
+      </div>
+      <div class="tool">
+        <img class="tool_icon" src="assets/save.png" alt="Save" width="40px">
+        <p class="tooltip">Save (WIP)</p>
+      </div>
       <div id="save_functionality">
         <input type="submit" id="export_button" value="Export" disabled="true">
         <input type="submit" id="import_button" value="Import">
