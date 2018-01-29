@@ -245,7 +245,7 @@ getTxt = function (){
   $.ajax({
     url:'text/html.txt',
     success: function (data){
-      $('.show_code').html(data);
+      $('.show_code').text(data);
     }
   });
 }
