@@ -1,3 +1,8 @@
+$('button').click(function (event) {
+  event.preventDefault();
+  $('.welcome').css('visibility', 'hidden');
+});
+
 // Global variables declaration
 // By default, start with the color black
 var selectedColor = '#000000';
@@ -85,7 +90,6 @@ function useTool(cell, color) {
 function colorCell (cell, color) {
   $(cell).css('background-color', color);
   $(cell).css('border', color);
-  $(cell).parent().css('border', color);
 };
 
 // Function for filling a random area
@@ -189,12 +193,12 @@ $('#export_button').on('click', function(event) {
   $('#save_functionality').children('textarea').remove();
   $('#save_functionality').append('<textarea name="textarea" rows="10" cols="50" readonly="true"></textarea>');
   var exportString = gridWidth + '|' + gridHeight + '|';
-  for (let i = 0; i < gridHeight; i ++) {
-    let currentRow = $('#pixel_canvas').find('tr').eq(i);
-    for (let j = 0; j < gridWidth; j ++) {
+  for (let rowIndex = 0; rowIndex < gridHeight; rowIndex ++) {
+    let currentRow = $('#pixel_canvas').find('tr').eq(rowIndex);
+    for (let columnIndex = 0; columnIndex < gridWidth; columnIndex ++) {
       let currentCell = '';
       let currentColor = '';
-      currentCell = $(currentRow).find('td').eq(j);
+      currentCell = $(currentRow).find('td').eq(columnIndex);
       currentColor = $(currentCell).css('background-color');
       exportString += currentColor + '|';
     }
@@ -236,3 +240,14 @@ $('#import_button').on('click', function(event) {
     isTextareaVisible = false;
   }
 });
+
+getTxt = function (){
+  $.ajax({
+    url:'text/html.txt',
+    success: function (data){
+      $('.show_code').html(data);
+    }
+  });
+}
+
+$('.buttoncode').click(getTxt);

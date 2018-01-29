@@ -89,8 +89,6 @@
       </div>
   </div>
 </div>
-<button class="buttoncode" type="button" name="buttoncode">Show code</button>
-<p class="show_code"></p>
   <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
   <script src="designs.js"></script>
 </body>
