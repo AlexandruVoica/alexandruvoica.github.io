@@ -39,7 +39,7 @@ html {
 .welcome_footer {
   /* font-family: Open Sans, sans-serif; */
   z-index: 11;
-  width: 400px;
+  width: 500px;
 }
 
 .welcome_main {
@@ -105,14 +105,75 @@ button {
 
 .gallery {
   background-color: gray;
-  flex: 0 0 300px;
+  flex: 0 0 200px;
   display: flex;
   flex-direction: column;
+  margin: 15px 15px 15px 0;
+  border-radius: 10px;
+  box-shadow: 10px 10px 30px 1px rgba(94,94,94,1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  cursor: default;
+}
+
+.gallery .save_slot {
+  margin: 0 15px 15px 15px;
+  background-color: lightgray;
+  order: 0;
+}
+
+.save_slot:first-child {
+  margin-top: 15px;
 }
 
 .save_slot {
   flex: 1;
+  background-image: url('assets/gallery.png');
+  background-size: 50px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-blend-mode: overlay;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
+
+.save_slot:hover {
+  box-shadow: 6px 6px 20px 1px rgba(94,94,94,1);
+  animation-name: grow;
+  animation-duration: .8s; 
+  animation-timing-function: ease; 
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+}
+
+@keyframes grow {
+  from {
+    transform: scale(1);
+  }
+
+  to {
+    transform: scale(1.15);
+  }
+}
+
+.save_slot table {
+  margin: 0;
+  border: .1px solid gray;
+}
+
+.save_slot table tr,
+.save_slot table td {
+  height: 1px;
+  width: 1px;
+  border: none;
+}
+
+/* .save_slot table td {
+  width: .7px;
+  height: auto;
+} */
 
 .app_footer {
   flex: none;
@@ -121,6 +182,20 @@ button {
   font-family: 'Open Sans', sans-serif;
   color: rgba(255, 255, 255, 1);
   background: linear-gradient(50deg, #7eb4c4, rgba(40, 40, 40, 1));
+  text-align: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.buttoncode {
+  margin: 0 15px 0 0;
+  flex: 0 0 auto;
+}
+
+.app_footer p {
+  flex: 1;
 }
 
 .title {
@@ -138,11 +213,15 @@ h1 {
 }
 
 h2 {
-  margin: 1em 0 0.25em;
+  margin: 10px 0 5px 0;
 }
 
 h2:first-of-type {
   margin-top: 0.5em;
+}
+
+.header p {
+  margin: 5px 0;
 }
 
 #canvas_header {
@@ -329,4 +408,8 @@ textarea {
     position: relative;
     top: 50%;
   }
+
+  .app_footer button {
+    visibility: none;
+  }  
 }
