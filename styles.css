@@ -5,18 +5,34 @@ html {
   margin: 0;
 }
 
-div.welcome {
+.global {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.welcome {
   height: 100%;
   width: 100%;
   background: rgba(20, 20, 20, 0.8);
   /* background: radial-gradient(circle closest-side, rgba(20, 20, 20, 0.9), rgba(60, 60, 60, 0)), rgba(20, 20, 20, 0.8);
   transform: translate(0); */
   position: absolute;
+  z-index: 9;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.welcome_container {
+  align-self: center;
   z-index: 10;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  box-shadow: 10px 10px 30px 1px rgba(40, 40, 40, 1);
 }
 
 .welcome_main,
@@ -24,14 +40,13 @@ div.welcome {
   /* font-family: Open Sans, sans-serif; */
   z-index: 11;
   width: 400px;
-  position: relative;
 }
 
 .welcome_main {
   font-size: 16px;
   font-family: 'Open Sans', sans-serif;
   padding: 15px 15px 8px 15px;
-  border-radius: 10px 10px 0 0;
+  /* border-radius: 10px 10px 0 0; */
   background: rgba(255, 255, 255, 1);
 }
 
@@ -40,9 +55,9 @@ div.welcome {
   font-family: 'Open Sans', sans-serif;
   color: rgba(255, 255, 255, 1);
   padding: 8px 15px 15px 15px;
-  border-radius: 0 0 10px 10px;
+  /* border-radius: 0 0 10px 10px; */
   /* background: rgba(40, 40, 40, 1); */
-  background: linear-gradient(50deg, #50d7ff, rgba(40, 40, 40, 1));
+  background: linear-gradient(50deg, #7eb4c4, rgba(40, 40, 40, 1));
 }
 
 div.welcome p {
@@ -58,36 +73,54 @@ button {
   text-decoration: underline;
 }
 
-div.container {
+.container {
   font-family: Arial;
   height: 100%;
-  width: 100%;
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
+  flex: 1;
+  position: relative;
 }
 
 .header {
+  flex: 0 0 450px;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   background-color: rgb(211, 211, 211);
-  height: 97%;
-  max-width: 500px;
-  min-width: 400px;
   border: 1px solid rgba(169, 169, 169, 1);
-  /* border-radius: 20px; */
+  border-radius: 10px;
   box-shadow: 10px 10px 30px 1px rgba(94,94,94,1);
   text-align: center;
-  flex-grow: 0;
-  margin-left: 15px;
-  box-sizing: border-box;
+  margin: 15px 0 15px 15px;
   cursor: default;
   font-family: 'Open Sans', sans-serif;
 }
 
 .canvas_space {
   text-align: center;
-  height: auto;
-  flex-grow: 1;
+  flex: 1;
+  align-self: center;
+}
+
+.gallery {
+  background-color: gray;
+  flex: 0 0 300px;
+  display: flex;
+  flex-direction: column;
+}
+
+.save_slot {
+  flex: 1;
+}
+
+.app_footer {
+  flex: none;
+  width: 100%;
+  font-size: 13px;
+  font-family: 'Open Sans', sans-serif;
+  color: rgba(255, 255, 255, 1);
+  background: linear-gradient(50deg, #7eb4c4, rgba(40, 40, 40, 1));
 }
 
 .title {
@@ -124,6 +157,10 @@ td {
   box-sizing: content-box;
 }
 
+td {
+  background-color: rgb(255, 255, 255);
+}
+
 tr {
   border: 0px;
 }
@@ -136,11 +173,9 @@ table {
 
 tr,
 td {
-  height: 20px;
-  width: 20px;
+  height: 15px;
+  width: 15px;
 }
-
-
 
 input[type=number] {
   width: 6em;
@@ -251,6 +286,10 @@ textarea {
 /* Show the tooltip text when you mouse over the tooltip container */
 .tool:hover .tooltip {
     visibility: visible;
+}
+
+.cell_position {
+  margin: 0 0 5px 0;
 }
 
 @media (max-width: 950px) {

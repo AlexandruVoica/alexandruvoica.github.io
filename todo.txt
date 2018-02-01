@@ -1,11 +1,8 @@
 //TODO: Add an inferior limit for the grid dimensions
-//TODO: Sidebar should have a relative height plus margins
 //TODO: Canvas should resize itself relative to viewport
-//TODO: Maybe rewrite export functionality
-//TODO: Add import feature
+//TODO: Maybe rewrite export functionality (can't remember why)
 //TODO: Implement responsiveness (for different devices)
-//TODO: Refactor JS
-//TODO: Add fill tool
-//TODO: Add eraser tool
-//TODO: Add undo tool
-//TODO: Completely change color scheme
+
+//TODO: Completely change color scheme (just a suggestion, not an objective)
+
+//TODO: Refactor entire JS

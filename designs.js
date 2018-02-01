@@ -9,6 +9,11 @@ var selectedColor = '#000000';
 // By default, start with a height and width of 0
 var gridHeight = 0;
 var gridWidth = 0;
+var canvas = $('#pixel_canvas');
+// Global variable that will hold the index of the array that stores the arrays of cells
+var undoActionIndex = 0;
+var undoCellIndex = 0;
+var undo = [[]];
 
 // Select color event listener
 $('#colorPicker').change(function(event) {
@@ -61,9 +66,8 @@ function makeGrid() {
   $('.container').css('cursor', 'url(assets/icons/paintbrush.png) 0 32, auto');
 };
 
-// Code for coloring of the cells
 // Disable default cursor dragging behaviour for canvas
-$('table').on('dragstart', function(event) {
+$(canvas).on('dragstart', function(event) {
   event.preventDefault();
 });
 
@@ -71,35 +75,87 @@ $('table').on('dragstart', function(event) {
 var dragging = false;
 
 // Event listener for clicking on a cell
-$('table').on('mousedown', 'td', function(event) {
+$(canvas).on('mousedown', 'td', function(event) {
   // Mouse was clicked, make dragging possible
   dragging = true;
-  useTool(event.target, selectedColor);
+  useTool(event.target, selectedColor, $('.active').attr('alt'));
 });
 
-function useTool(cell, color) {
-  let toolName = $('.active').attr('alt');
+// Event listener for releasing mouse
+$(canvas).on('mouseup', 'td', function(event) {
+  // Mouse is no longer clicked, dragging is disabled once again
+  dragging = false;
+  // Undo will keep a history of 5 actions
+  undoActionIndexBehaviour();
+});
+
+// Event listener for when mouse enters a cell AND dragging is allowed
+$(canvas).on('mouseenter', 'td', function(event) {
+  let selectedCell = event.target;
+  // If dragging is available then color cell
+  if (dragging){
+    useTool(event.target, selectedColor, $('.active').attr('alt'));
+  }
+  // Listen for updating current cell position
+  let rowIndex = $(selectedCell).parent().attr('data-position');
+  let columnIndex = $(selectedCell).attr('data-position');
+  $('.cell_position').html(rowIndex + ' x ' + columnIndex);
+});
+
+// If cursor leaves table situation handling
+$(canvas).on('mouseleave', function() {
+  // If cursor leaves table, reset cell position
+  $('.cell_position').html('0 x 0');
+  // If dragging and painting and cursor leaves canvas, modify undoActionIndex
+  if (dragging) {
+    undoActionIndexBehaviour();
+  };
+  // If cursor leaves table, dragging is disabled (solved bug)
+  dragging = false;
+});
+
+// Function for multiple calling of a tool once activated
+function useTool(cell, color, toolName) {
+  let isCellAlreadyInArray = false;
+  for (let index = 0; index < undo[undoActionIndex].length; index++) {
+    if (undo[undoActionIndex][index].undoCell === cell) {
+      isCellAlreadyInArray = true;
+      break;
+    }
+  }
+  if (!(isCellAlreadyInArray)) {
+    let undoObject = {
+      undoCell: '',
+      cellPreviousColor: '',
+      cellCurrentColor: ''
+    };
+    undoObject.undoCell = cell;
+    undoObject.cellPreviousColor = $(cell).css('background-color');
+    undoObject.cellCurrentColor = color;
+    undo[undoActionIndex][undoCellIndex] = undoObject;
+    undoCellIndex ++;
+  };
   switch (toolName) {
     case 'Paint brush': colorCell(cell, color); break;
     case 'Eraser tool': colorCell(cell, ''); break;
-    case 'Fill tool': fillCells(cell);
-  }
-}
+    case 'Fill tool': fillCells(cell); break;
+  };
+};
 
 // Function for the coloring of a clicked cell
 function colorCell (cell, color) {
   $(cell).css('background-color', color);
-  $(cell).css('border', color);
+  // $(cell).css('border', color);
 };
 
-// Function for filling a random area
+// Function for filling a random area (BFS)
 function fillCells (cell) {
   let color = $(cell).css('background-color');
   let area = [];
   let temporaryArray = [];
   temporaryArray.push(cell);
   area = findArea(temporaryArray, [], color);
-
+  // Find the area delimited by a all the cells that have a different color compared to the initial clicked cell
   function findArea (cellsArray, cellsCheckedArray, color) {
     if (cellsArray.length === 0)
       return cellsCheckedArray;
@@ -119,7 +175,7 @@ function fillCells (cell) {
       return findArea(cellsArray, cellsCheckedArray, color);
     };
   };
-
+  // Find all the neighbours that are 1 cell away in clockwise order starting from top
   function findNeighbours (cell) {
     let currentCellIndex = $(cell).attr('data-position');
     let neighbourCellsArray = [];
@@ -133,38 +189,22 @@ function fillCells (cell) {
     neighbourCellsArray[3] = $(cell).prev('td')[0];
     return neighbourCellsArray;
   };
-
+  // Lastly, color all the cells in the array of found cells that match
   area.forEach(function(cell) {
-    colorCell(cell, selectedColor);
+    useTool(cell, selectedColor, 'Paint brush');
   });
 };
 
-// Event listener for releasing mouse
-$('table').on('mouseup', 'td', function(event) {
-  // Mouse is no longer clicked, dragging is disabled once again
-  dragging = false;
-});
-
-// Event listener for when mouse enters a cell AND dragging is allowed
-$('table').on('mouseenter', 'td', function(event) {
-  let selectedCell = event.target;
-  // If dragging is available then color cell
-  if (dragging){
-    useTool(event.target, selectedColor);
-  }
-  // Listen for updating current cell position
-  let rowIndex = $(selectedCell).parent().attr('data-position');
-  let columnIndex = $(selectedCell).attr('data-position');
-  $('.cell_position').html(rowIndex + ' x ' + columnIndex);
-});
-
-// If cursor leaves table situation handling
-$('table').on('mouseleave', function() {
-  // If cursor leaves table, reset cell position
-  $('.cell_position').html('0 x 0');
-  // If cursor leaves table, dragging is disabled (solved bug)
-  dragging = false;
-});
+function undoActionIndexBehaviour() {
+  undoCellIndex = 0;
+  if (undoActionIndex < 5) {
+    undoActionIndex ++;
+    undo.push([]);
+  } else {
+    undo.shift();
+    undo.push([]);
+  } 
+}
 
 // Event listener for switching to eraser tool
 $('.tool_icon[alt="Eraser tool"]').on('click', function(event) {
@@ -187,12 +227,47 @@ $('.tool_icon[alt="Fill tool"]').on('click', function(event) {
   $('.container').css('cursor', 'url(assets/icons/filltool.png) 0 32, auto');
 });
 
+// Event listener for triggering Fill canvas
+$('.tool_icon[alt="Fill canvas"]').on('click', function(event) {
+  let allCells = Array.from($('#pixel_canvas').find('td'));
+  allCells.forEach(function(cell) {
+    useTool(cell, selectedColor, 'Paint brush');
+  });
+  undoActionIndexBehaviour();
+});
+
+// Event listener for triggering Clear canvas
+$('.tool_icon[alt="Clear canvas"]').on('click', function(event) {
+  let allCells = Array.from($('#pixel_canvas').find('td'));
+  allCells.forEach(function(cell) {
+    useTool(cell, selectedColor, 'Eraser tool')
+  });
+  undoActionIndexBehaviour();
+});
+
+// Event listener for triggering an undo
+$('.tool_icon[alt="Undo"]').on('click', function(event) {
+  if (undoActionIndex > 0) {
+    let cellsToBeChanged = undo[undoActionIndex - 1];
+    // Using forEach() causes an unwanted bug
+    // for (let index = 0; index < cellsToBeChanged.length; index ++) {
+    //   $(cellsToBeChanged[index].undoCell).css('background-color', cellsToBeChanged[index].cellPreviousColor);
+    // };
+    cellsToBeChanged.forEach(function(object, index, array) {
+      $(object.undoCell).css('background-color', object.cellPreviousColor);
+    });
+    cellsToBeChanged.splice(0, cellsToBeChanged.length);
+    undo.pop();
+    undoActionIndex --;
+  }
+});
+
 // Export canvas by generating a string
 $('#export_button').on('click', function(event) {
   event.preventDefault();
   $('#save_functionality').children('textarea').remove();
-  $('#save_functionality').append('<textarea name="textarea" rows="10" cols="50" readonly="true"></textarea>');
-  var exportString = gridWidth + '|' + gridHeight + '|';
+  $('#save_functionality').append('<textarea name="textarea" rows="5" cols="50" readonly="true"></textarea>');
+  let exportString = gridWidth + '|' + gridHeight + '|';
   for (let rowIndex = 0; rowIndex < gridHeight; rowIndex ++) {
     let currentRow = $('#pixel_canvas').find('tr').eq(rowIndex);
     for (let columnIndex = 0; columnIndex < gridWidth; columnIndex ++) {
@@ -212,7 +287,7 @@ $('#import_button').on('click', function(event) {
   event.preventDefault();
   if (isTextareaVisible === false) {
     $('#save_functionality').children('textarea').remove();
-    $('#save_functionality').append('<textarea name="textarea" rows="10" cols="50">Copy import string here and press the Import button again.</textarea>');
+    $('#save_functionality').append('<textarea name="textarea" rows="5" cols="50">Copy import string here and press the Import button again.</textarea>');
     isTextareaVisible = true;
   } else {
     let importString = $('#save_functionality').children('textarea').val();
@@ -239,6 +314,10 @@ $('#import_button').on('click', function(event) {
     }
     isTextareaVisible = false;
   }
+});
+
+$('#save_functionality').on('click', 'textarea', function(event) {
+  $(event.target).select();
 });
 
 getTxt = function (){

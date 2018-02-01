@@ -8,89 +8,125 @@
 </head>
 <body>
 <div class="welcome">
-  <div class="welcome_main">
-    <p>Welcome to Pixel Art Maker.</p>
-    <p>This application contains the following features:</p>
-    <ul>
-      <li>a different overall interface design</li>
-      <li>responsiveness for all devices</li>
-      <li>multiple tools</li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-    </ul>
-    <p>Disclaimer: I have not used any other student's code. I have only used code snippets from public open-license ressources. This application is developed solely by myself.</p>
-  </div>
-  <div class="welcome_footer">
-    <p>This application was built by <span id="name">Alexandru Voica</span> during the Udacity Front-End Developer Scholarship Challenge.</p>
+  <div class="welcome_container">
+    <div class="welcome_main">
+      <h3>Welcome to Pixel Art Maker v1.0</h3>
+      <p>This application contains the following features:</p>
+      <ul>
+        <li>a different overall interface design</li>
+        <li>responsiveness for all devices</li>
+        <li>multiple tools with specific behaviour</li>
+        <li>tooltips</li>
+        <li>dragging is possible while coloring or erasing</li>
+        <li>fill an irregular contour (breadth first search algorithm)</li>
+        <li>global coloring and erasing of canvas</li>
+        <li>undo a limited number of steps</li>
+        <li>history of used colors</li>
+        <li>gallery of previous paintings</li>
+        <li>restore to any of the previous paintings</li>
+        <li>import and export capabilities (through string parsing)</li>
+        <li>save a painting in image format</li>
+      </ul>
+      <p>Disclaimer: I have not used any other student's code. I have only used code snippets from public open-license ressources. This application is developed solely by myself.</p>
+    </div>
+    <div class="welcome_footer">
+      <p>This application was built by <span id="name">Alexandru Voica</span> during the Udacity Front-End Developer Scholarship Challenge.</p>
+    </div>
   </div>
   <button type="button" name="proceed">Continue to application</button>
 </div>
-<div class="container">
-  <div class="header">
-    <h1 class="title">Pixel Art Maker</h1>
-    <h2>Choose Grid Size</h2>
-    <form id="sizePicker">
-        Grid Height:
-        <input type="number" id="input_height" name="height" min="5" value="20">
-        Grid Width:
-        <input type="number" id="input_width" name="width" min="5" value="20">
-        <input type="submit" id="submit_button" value="Create grid">
-    </form>
-    <p>The grid is currently <span id="get_height">20</span> by <span id="get_width">20</span>.</p>
-    <h2>Pick A Color</h2>
-    <input type="color" id="colorPicker">
-    <p><span id="colorString">#000000</span> has been selected!</p>
-    <div id="toolbox">
-      <h2>Toolbox</h2>
-      <div class="tool">
-        <img class="tool_icon" src="assets/paintbrush.png" alt="Paint brush" width="40px">
-        <p class="tooltip">Paint brush</p>
+<div class="global">
+  <div class="container">
+    <div class="header">
+      <h1 class="title">Pixel Art Maker</h1>
+      <h2>Choose Grid Size</h2>
+      <form id="sizePicker">
+          Grid Height:
+          <input type="number" id="input_height" name="height" min="5" value="20">
+          Grid Width:
+          <input type="number" id="input_width" name="width" min="5" value="20">
+          <input type="submit" id="submit_button" value="Create grid">
+      </form>
+      <p>The grid is currently <span id="get_height">20</span> by <span id="get_width">20</span>.</p>
+      <h2>Pick A Color</h2>
+      <input type="color" id="colorPicker">
+      <p><span id="colorString">#000000</span> has been selected!</p>
+      <div id="toolbox">
+        <h2>Toolbox</h2>
+        <div class="tool">
+          <img class="tool_icon" src="assets/paintbrush.png" alt="Paint brush" width="40px">
+          <p class="tooltip">Paint brush</p>
+        </div>
+        <div class="tool">
+          <img class="tool_icon" src="assets/eraser.png" alt="Eraser tool" width="40px">
+          <p class="tooltip">Eraser</p>
+        </div>
+        <div class="tool">
+          <img class="tool_icon" src="assets/filltool.png" alt="Fill tool" width="40px">
+          <p class="tooltip">Fill tool</p>
+        </div>
+        <br>
+        <div class="tool">
+          <img class="tool_icon" src="assets/fillcanvastool.png" alt="Fill canvas" width="40px">
+          <p class="tooltip">Fill canvas</p>
+        </div>
+        <div class="tool">
+          <img class="tool_icon" src="assets/cleartool.png" alt="Clear canvas" width="40px">
+          <p class="tooltip">Clear canvas</p>
+        </div>
+        <div class="tool">
+          <img class="tool_icon" src="assets/undo.png" alt="Undo" width="40px">
+          <p class="tooltip">Undo</p>
+        </div>
+        <br>
+        <div class="tool">
+          <img class="tool_icon" src="assets/gallery.png" alt="Gallery" width="40px">
+          <p class="tooltip">Save to gallery</p>
+        </div>
+        <div class="tool">
+          <img class="tool_icon" src="assets/save.png" alt="Save" width="40px">
+          <p class="tooltip">Download as image</p>
+        </div>
+        <div id="save_functionality">
+          <input type="submit" id="export_button" value="Export" disabled="true">
+          <input type="submit" id="import_button" value="Import">
+        </div>
       </div>
-      <div class="tool">
-        <img class="tool_icon" src="assets/eraser.png" alt="Eraser tool" width="40px">
-        <p class="tooltip">Eraser</p>
+    </div>
+    <div class="canvas_space">
+          <p id="canvas_header">This is where the Design Canvas will be generated.</p>
+        <div>
+          <table id="pixel_canvas">
+          <!--
+            The cells of the table will be appended here
+          -->
+          </table>
+        </div>
+    </div>
+    <div class="gallery">
+      <div class="save_slot">
+        <p>abc</p>
       </div>
-      <div class="tool">
-        <img class="tool_icon" src="assets/filltool.png" alt="Fill tool" width="40px">
-        <p class="tooltip">Fill tool</p>
+      <div class="save_slot">
+        <p>abc</p>
       </div>
-      <br>
-      <div class="tool">
-        <img class="tool_icon" src="assets/cleartool.png" alt="Clear" width="40px">
-        <p class="tooltip">Clear canvas</p>
+      <div class="save_slot">
+        <p>abc</p>
       </div>
-      <div class="tool">
-        <img class="tool_icon" src="assets/undo.png" alt="Undo" width="40px">
-        <p class="tooltip">Undo</p>
+      <div class="save_slot">
+        <p>abc</p>
       </div>
-      <div class="tool">
-        <img class="tool_icon" src="assets/save.png" alt="Save" width="40px">
-        <p class="tooltip">Save (WIP)</p>
-      </div>
-      <div id="save_functionality">
-        <input type="submit" id="export_button" value="Export" disabled="true">
-        <input type="submit" id="import_button" value="Import">
+      <div class="save_slot">
+        <p>abc</p>
       </div>
     </div>
   </div>
-  <div class="canvas_space">
-        <p id="canvas_header">This is where the Design Canvas will be generated.</p>
-      <div>
-        <table id="pixel_canvas">
-        <!--
-          The cells of the table will be appended here
-        -->
-        </table>
-      </div>
+  <div class="app_footer">
+    <p>This application was built by <span id="name">Alexandru Voica</span> during the Udacity Front-End Developer Scholarship Challenge.</p>
   </div>
 </div>
-<button class="buttoncode" type="button" name="buttoncode">Show code</button>
-<textarea class="show_code"></textarea>
+<!-- <button class="buttoncode" type="button" name="buttoncode">Show code</button>
+<textarea class="show_code"></textarea> -->
   <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
   <script src="designs.js"></script>
 </body>
