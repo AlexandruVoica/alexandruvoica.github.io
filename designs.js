@@ -1,8 +1,3 @@
-$('button').click(function (event) {
-  event.preventDefault();
-  $('.popup').css('visibility', 'hidden');
-});
-
 // Global variables declaration
 // By default, start with the color black
 const colorPicker = $('#colorPicker');
@@ -11,6 +6,8 @@ var selectedColor = '#000000';
 var gridHeight = 0;
 var gridWidth = 0;
 const mainCanvas = $('#pixel_canvas');
+// Check if user is dragging mouse while clicked
+var dragging = false;
 // Global variable that will hold the index of the array that stores all the cells that have been changed during one action
 var undoActionIndex = 0;
 var undoCellIndex = 0;
@@ -26,47 +23,6 @@ var continueWithDeletingCurrentCanvas = true;
 const swatches = $('.swatches');
 // Global variable that holds the visibility of the textarea necessary for importing
 var isTextareaVisible = false;
-
-// Select color event listener
-$(colorPicker).change(function(event) {
-  selectedColor = event.target.value;
-  $('#colorString').text(selectedColor.toUpperCase());
-  $('#colorString').css('background-color', selectedColor);
-  // Once changed, add color to swatches
-  let currentSwatchSlot = $('.swatch_slot')[0];
-  shiftRepresentation(swatches);
-  $(currentSwatchSlot).append('<div class="swatch_color"></div>');
-  $(currentSwatchSlot).children('.swatch_color').css('background-color', selectedColor);
-});
-
-// When size is submitted by the user, call makeGrid()
-$('#submit_button').click(function(event) {
-  event.preventDefault();
-  gridHeight = $('#input_height').val();
-  gridWidth = $('#input_width').val();
-  // Check if dimensions are not too big
-  if (gridHeight > 45 || gridWidth > 45)  {
-    // Delete previous canvas
-    $('#canvas_header').remove();
-    // Delete previous canvas 
-    $(mainCanvas).children().remove();
-    $('.canvas_space').append('<p id="canvas_header">Requested canvas is too big. Please choose a dimension less than 45.</p>');
-    // Stop function from executing the makeGrid call
-    return true;
-  }
-  $('#get_height').text(gridHeight);
-  $('#get_width').text(gridWidth);
-  makeGrid();
-});
-
-$('.swatch_slot').on('click', function(event) {
-  let swatchColor = $(this).children('.swatch_color').css('background-color');
-  let convertedSwatchColor = convertRGBToHex(swatchColor);
-  selectedColor = convertedSwatchColor;
-  $(colorPicker).val(selectedColor);
-  $('#colorString').text(selectedColor.toUpperCase());
-  $('#colorString').css('background-color', selectedColor);
-});
 
 // Snippet taken from http://wowmotty.blogspot.ro/2017/05/convert-rgba-output-to-hex-color.html
 function convertRGBToHex(orig) {
@@ -113,57 +69,6 @@ function initializeCanvas () {
   // Initialize cursor when canvas was created
   $('.container').css('cursor', 'url(assets/icons/paintbrush.png) 0 32, auto');
 }
-
-// Disable default cursor dragging behaviour for canvas
-$(mainCanvas).on('dragstart', function(event) {
-  event.preventDefault();
-});
-
-// Check if user is dragging mouse while clicked
-var dragging = false;
-
-// Event listener for clicking on a cell
-$(mainCanvas).on('mousedown', 'td', function(event) {
-  // Mouse was clicked, make dragging possible
-  dragging = true;
-  useTool(event.target, selectedColor, $('.active').attr('alt'));
-  if (isGalleryEmpty === false) {
-    continueWithDeletingCurrentCanvas = false;
-  }
-});
-
-// Event listener for releasing mouse
-$(mainCanvas).on('mouseup', 'td', function(event) {
-  // Mouse is no longer clicked, dragging is disabled once again
-  dragging = false;
-  // Undo will keep a history of 5 actions
-  undoActionIndexBehaviour();
-});
-
-// Event listener for when mouse enters a cell AND dragging is allowed
-$(mainCanvas).on('mouseenter', 'td', function(event) {
-  let selectedCell = event.target;
-  // If dragging is available then color cell
-  if (dragging){
-    useTool(event.target, selectedColor, $('.active').attr('alt'));
-  }
-  // Listen for updating current cell position
-  let rowIndex = $(selectedCell).parent().attr('data-position');
-  let columnIndex = $(selectedCell).attr('data-position');
-  $('.cell_position').html(rowIndex + ' x ' + columnIndex);
-});
-
-// If cursor leaves table situation handling
-$(mainCanvas).on('mouseleave', function() {
-  // If cursor leaves table, reset cell position
-  $('.cell_position').html('0 x 0');
-  // If dragging and painting and cursor leaves canvas, modify undoActionIndex
-  if (dragging) {
-    undoActionIndexBehaviour();
-  };
-  // If cursor leaves table, dragging is disabled (solved bug)
-  dragging = false;
-});
 
 // Function for multiple calling of a tool once activated
 function useTool(cell, color, toolName) {
@@ -257,6 +162,172 @@ function undoActionIndexBehaviour() {
   } 
 }
 
+function shiftRepresentation(container) {
+  let containerSlots = Array.from($(container).children());
+  let index = containerSlots.length - 1;
+  for (let index = containerSlots.length - 1; index >= 0; index --) {
+    $(containerSlots[index]).children().remove();
+    if (index > 0) {
+      $(containerSlots[index]).append($(containerSlots[index-1]).contents());
+    }
+  }
+};
+
+function reconstructCanvas() {
+  if (continueWithDeletingCurrentCanvas === false) {
+    $('.not_saved').css('visibility', 'visible');
+  } else {
+    let string = convertCanvasToString(galleryCanvasStored);
+    initializeCanvas();
+    parseStringToCanvas(string, mainCanvas);
+  }
+};
+
+function convertCanvasToString (canvas) {
+  let height = $(canvas).children('tr').length;
+  let width = $(canvas).children('tr').first().children('td').length;
+  let exportString = width + '|' + height + '|';
+  for (let rowIndex = 0; rowIndex < height; rowIndex ++) {
+    let currentRow = $(canvas).find('tr').eq(rowIndex);
+    for (let columnIndex = 0; columnIndex < width; columnIndex ++) {
+      let currentCell = '';
+      let currentColor = '';
+      currentCell = $(currentRow).find('td').eq(columnIndex);
+      currentColor = $(currentCell).css('background-color');
+      exportString += currentColor + '|';
+    }
+  }
+  return exportString;
+}
+
+function constructCanvas (table, height, width) {
+  for(let row = 0; row < height; row ++) {
+      $(table).append('<tr data-position="' + row + '"></tr>');
+    }
+    for(let column = 0; column < width; column++) {
+      $(table).children('tr').append('<td data-position="' + column + '"></td>');
+    }
+}
+
+// table holds where the canvas should be reconstructed
+function parseStringToCanvas (stringToParse, table) {
+  let attributesArray = stringToParse.split('|');
+  let height = attributesArray[1];
+  let width = attributesArray[0];
+  let numberOfCells = attributesArray.length - 3;
+  if (numberOfCells != (width * height)) {
+    alert('Import string is not correct.');
+    return true;
+  }
+  constructCanvas(table, height, width);
+  let readIndex = 2;
+  for (let i = 0; i < height; i ++) {
+    let currentRow = $(table).find('tr').eq(i);
+    for (let j = 0; j < width; j ++) {
+      let currentCell = $(currentRow).find('td').eq(j);
+      let currentColor = attributesArray[readIndex];
+      if (currentColor !== 'rgba(0, 0, 0, 0)') {
+        colorCell(currentCell, currentColor);
+      }
+      readIndex ++;
+    }
+  }
+}
+
+$('button').click(function (event) {
+  event.preventDefault();
+  $('.popup').css('visibility', 'hidden');
+});
+
+// Select color event listener
+$(colorPicker).change(function(event) {
+  selectedColor = event.target.value;
+  $('#colorString').text(selectedColor.toUpperCase());
+  $('#colorString').css('background-color', selectedColor);
+  // Once changed, add color to swatches
+  let currentSwatchSlot = $('.swatch_slot')[0];
+  shiftRepresentation(swatches);
+  $(currentSwatchSlot).append('<div class="swatch_color"></div>');
+  $(currentSwatchSlot).children('.swatch_color').css('background-color', selectedColor);
+});
+
+// When size is submitted by the user, call makeGrid()
+$('#submit_button').click(function(event) {
+  event.preventDefault();
+  gridHeight = $('#input_height').val();
+  gridWidth = $('#input_width').val();
+  // Check if dimensions are not too big
+  if (gridHeight > 45 || gridWidth > 45)  {
+    // Delete previous canvas
+    $('#canvas_header').remove();
+    // Delete previous canvas 
+    $(mainCanvas).children().remove();
+    $('.canvas_space').append('<p id="canvas_header">Requested canvas is too big. Please choose a dimension less than 45.</p>');
+    // Stop function from executing the makeGrid call
+    return true;
+  }
+  $('#get_height').text(gridHeight);
+  $('#get_width').text(gridWidth);
+  makeGrid();
+});
+
+$('.swatch_slot').on('click', function(event) {
+  let swatchColor = $(this).children('.swatch_color').css('background-color');
+  let convertedSwatchColor = convertRGBToHex(swatchColor);
+  selectedColor = convertedSwatchColor;
+  $(colorPicker).val(selectedColor);
+  $('#colorString').text(selectedColor.toUpperCase());
+  $('#colorString').css('background-color', selectedColor);
+});
+
+// Disable default cursor dragging behaviour for canvas
+$(mainCanvas).on('dragstart', function(event) {
+  event.preventDefault();
+});
+
+// Event listener for clicking on a cell
+$(mainCanvas).on('mousedown', 'td', function(event) {
+  // Mouse was clicked, make dragging possible
+  dragging = true;
+  useTool(event.target, selectedColor, $('.active').attr('alt'));
+  if (isGalleryEmpty === false) {
+    continueWithDeletingCurrentCanvas = false;
+  }
+});
+
+// Event listener for releasing mouse
+$(mainCanvas).on('mouseup', 'td', function(event) {
+  // Mouse is no longer clicked, dragging is disabled once again
+  dragging = false;
+  // Undo will keep a history of 5 actions
+  undoActionIndexBehaviour();
+});
+
+// Event listener for when mouse enters a cell AND dragging is allowed
+$(mainCanvas).on('mouseenter', 'td', function(event) {
+  let selectedCell = event.target;
+  // If dragging is available then color cell
+  if (dragging){
+    useTool(event.target, selectedColor, $('.active').attr('alt'));
+  }
+  // Listen for updating current cell position
+  let rowIndex = $(selectedCell).parent().attr('data-position');
+  let columnIndex = $(selectedCell).attr('data-position');
+  $('.cell_position').html(rowIndex + ' x ' + columnIndex);
+});
+
+// If cursor leaves table situation handling
+$(mainCanvas).on('mouseleave', function() {
+  // If cursor leaves table, reset cell position
+  $('.cell_position').html('0 x 0');
+  // If dragging and painting and cursor leaves canvas, modify undoActionIndex
+  if (dragging) {
+    undoActionIndexBehaviour();
+  };
+  // If cursor leaves table, dragging is disabled (solved bug)
+  dragging = false;
+});
+
 // Event listener for switching to eraser tool
 $('.tool_icon[alt="Eraser tool"]').on('click', function(event) {
   $('.tool_icon').removeClass('active');
@@ -325,34 +396,12 @@ $('.tool_icon[alt="Gallery"]').on('click', function() {
   parseStringToCanvas(string, currentGallerySlotCanvas);
 });
 
-function shiftRepresentation(container) {
-  let containerSlots = Array.from($(container).children());
-  let index = containerSlots.length - 1;
-  for (let index = containerSlots.length - 1; index >= 0; index --) {
-    $(containerSlots[index]).children().remove();
-    if (index > 0) {
-      $(containerSlots[index]).append($(containerSlots[index-1]).contents());
-    }
-  }
-};
-
-
 $('.save_slot').on('click', function(event) {
     galleryCanvasStored = $(this).children('table');
     if (Array.from($(galleryCanvasStored).children()).length !== 0) {
       reconstructCanvas();
     }
 });
-
-function reconstructCanvas() {
-  if (continueWithDeletingCurrentCanvas === false) {
-    $('.not_saved').css('visibility', 'visible');
-  } else {
-    let string = convertCanvasToString(galleryCanvasStored);
-    initializeCanvas();
-    parseStringToCanvas(string, mainCanvas);
-  }
-};
 
 $('.yes').on('click', function(event) {
   continueWithDeletingCurrentCanvas = true;
@@ -369,23 +418,6 @@ $('#export_button').on('click', function(event) {
   $('#save_functionality').children('textarea').html(string);
 });
 
-function convertCanvasToString (canvas) {
-  let height = $(canvas).children('tr').length;
-  let width = $(canvas).children('tr').first().children('td').length;
-  let exportString = width + '|' + height + '|';
-  for (let rowIndex = 0; rowIndex < height; rowIndex ++) {
-    let currentRow = $(canvas).find('tr').eq(rowIndex);
-    for (let columnIndex = 0; columnIndex < width; columnIndex ++) {
-      let currentCell = '';
-      let currentColor = '';
-      currentCell = $(currentRow).find('td').eq(columnIndex);
-      currentColor = $(currentCell).css('background-color');
-      exportString += currentColor + '|';
-    }
-  }
-  return exportString;
-}
-
 // Import canvas by parsing a string
 $('#import_button').on('click', function(event) {
   event.preventDefault();
@@ -401,74 +433,34 @@ $('#import_button').on('click', function(event) {
   }
 });
 
-function constructCanvas (table, height, width) {
-  for(let row = 0; row < height; row ++) {
-      $(table).append('<tr data-position="' + row + '"></tr>');
-    }
-    for(let column = 0; column < width; column++) {
-      $(table).children('tr').append('<td data-position="' + column + '"></td>');
-    }
-}
-
-// table holds where the canvas should be reconstructed
-function parseStringToCanvas (stringToParse, table) {
-  let attributesArray = stringToParse.split('|');
-  let height = attributesArray[1];
-  let width = attributesArray[0];
-  let numberOfCells = attributesArray.length - 3;
-  if (numberOfCells != (width * height)) {
-    alert('Import string is not correct.');
-    return true;
-  }
-  constructCanvas(table, height, width);
-  let readIndex = 2;
-  for (let i = 0; i < height; i ++) {
-    let currentRow = $(table).find('tr').eq(i);
-    for (let j = 0; j < width; j ++) {
-      let currentCell = $(currentRow).find('td').eq(j);
-      let currentColor = attributesArray[readIndex];
-      if (currentColor !== 'rgba(0, 0, 0, 0)') {
-        colorCell(currentCell, currentColor);
-      }
-      readIndex ++;
-    }
-  }
-}
-
 $('#save_functionality').on('click', 'textarea', function(event) {
   $(event.target).select();
 });
 
-getTxt = function (){
-  $('.text_code').css('visibility', 'visible');
-  $.ajax({
-    url:'text/html.txt',
-    success: function (data){
-      let dataHTML = '';
-      let target = $('.text_html');
-      dataHTML = data.replace(/</g,"&lt;").replace(/>/g,"&gt;").toString();
-      dataHTML = $.trim(dataHTML);
-      target.html(dataHTML);
-    }
-  });
-  $.ajax({
-    url:'text/css.txt',
-    success: function (data){
-      $('.text_css').html(data);
-    }
-  });
-  $.ajax({
-    url:'text/js.txt',
-    success: function (data){
-      $('.text_js').html(data);
-    }
-  });
-}
-
-$('.buttoncode').click(getTxt);
-
-// $('.buttoncode').click(function (event) {
-//   debugger;
-//   event.preventDefault();
+// getTxt = function (){
 //   $('.text_code').css('visibility', 'visible');
-// });
+//   $.ajax({
+//     url:'text/html.txt',
+//     success: function (data){
+//       let dataHTML = '';
+//       let target = $('.text_html');
+//       dataHTML = data.replace(/</g,"&lt;").replace(/>/g,"&gt;").toString();
+//       dataHTML = $.trim(dataHTML);
+//       target.html(dataHTML);
+//     }
+//   });
+//   $.ajax({
+//     url:'text/css.txt',
+//     success: function (data){
+//       $('.text_css').html(data);
+//     }
+//   });
+//   $.ajax({
+//     url:'text/js.txt',
+//     success: function (data){
+//       $('.text_js').html(data);
+//     }
+//   });
+// }
+
+// $('.buttoncode').click(getTxt);

@@ -1,8 +1,0 @@
-//TODO: Add an inferior limit for the grid dimensions
-//TODO: Canvas should resize itself relative to viewport
-//TODO: Maybe rewrite export functionality (can't remember why)
-//TODO: Implement responsiveness (for different devices)
-
-//TODO: Completely change color scheme (just a suggestion, not an objective)
-
-//TODO: Refactor entire JS

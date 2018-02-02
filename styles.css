@@ -281,9 +281,19 @@ button {
   align-items: center;
 }
 
-.buttoncode {
-  margin: 0 15px 0 0;
-  flex: 0 0 auto;
+.app_footer a {
+  box-sizing: border-box;
+  text-decoration: none;
+  color: black;
+  background-color: white;
+  border: 1px solid black;
+  padding: 5px 8px;
+  margin-right: 15px;
+}
+
+.app_footer a:hover {
+  color: white;
+  background-color: black;
 }
 
 .app_footer p {
