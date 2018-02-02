@@ -444,19 +444,19 @@ getTxt = function (){
   $.ajax({
     url:'text/html.txt',
     success: function (data){
-      $('.text_html').text(data);
+      $('.text_html').html(data);
     }
   });
   $.ajax({
     url:'text/css.txt',
     success: function (data){
-      $('.text_css').text(data);
+      $('.text_css').html(data);
     }
   });
   $.ajax({
     url:'text/js.txt',
     success: function (data){
-      $('.text_js').text(data);
+      $('.text_js').html(data);
     }
   });
 }

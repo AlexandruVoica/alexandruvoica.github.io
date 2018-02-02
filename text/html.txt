@@ -50,9 +50,9 @@
 <div class="popup text_code">
   <div class="popup_container">
     <div class="popup_main">
-      <xmp class="text_html prettyprint"></xmp>
-      <xmp class="text_css prettyprint"></xmp>
-      <xmp class="text_js prettyprint"></xmp>
+      <p class="text_html prettyprint"></p>
+      <p class="text_css prettyprint"></p>
+      <p class="text_js prettyprint"></p>
     </div>
     <button type="button" class="close" name="proceed">Close</button>
   </div>

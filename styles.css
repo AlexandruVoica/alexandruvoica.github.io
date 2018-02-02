@@ -121,12 +121,12 @@ button {
 }
 
 .text_code .popup_main xmp {
-  flex: 0 1 350px;
-  max-width: 350px;
+  flex: 0 1 400px;
+  max-width: 400px;
   height: 85vh;
   overflow: auto;
   text-align: justify;
-  font-size: 10px;
+  font-size: 12px;
   border: 1px solid darkgray;
   margin: 0 10px;
 }
