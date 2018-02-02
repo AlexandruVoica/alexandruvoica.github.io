@@ -122,10 +122,11 @@ button {
 
 .text_code .popup_main p {
   flex: 0 1 350px;
-  width: 350px;
+  max-width: 350px;
   height: 85vh;
   overflow: auto;
   text-align: justify;
+  font-size: 10px;
   border: 1px solid darkgray;
   margin: 0 10px;
 }
