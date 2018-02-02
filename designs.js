@@ -444,21 +444,10 @@ getTxt = function (){
   $.ajax({
     url:'text/html.txt',
     success: function (data){
-      // Code snippet adapted and borrowed from Mike Byrne https://codepen.io/13twelve/pen/vEYgzr
+      let dataHTML = '';
       let target = $('.text_html');
-      let sample_html = data;
-      let white_space = "☺";
-      // find how many spaces are before the part of the html
-      try {
-        white_space = sample_html.match(/\n+\s+\S/)[0].slice(0,(sample_html.match(/\n+\s+\S/)[0].length-3));
-      } catch(err) {}
-      // set up a regex to search for a white space string
-      let re = new RegExp(white_space,"g");
-      // replace white_space, < and > with &lt; and &gt; and remove the sample_code ref
-      sample_html = sample_html.replace(re,"\n").replace(/</g,"&lt;").replace(/>/g,"&gt;")
-      // trim out any new lines at begining or end of string
-      sample_html = $.trim(sample_html);
-      // stick into target
+      dataHTML = data.replace(/</g,"&lt;").replace(/>/g,"&gt;").toString();
+      dataHTML = $.trim(sample_html);
       target.html(sample_html);
     }
   });
