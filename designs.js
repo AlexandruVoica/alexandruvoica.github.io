@@ -448,7 +448,7 @@ getTxt = function (){
       let target = $('.text_html');
       dataHTML = data.replace(/</g,"&lt;").replace(/>/g,"&gt;").toString();
       dataHTML = $.trim(dataHTML);
-      target.html(sample_html);
+      target.html(dataHTML);
     }
   });
   $.ajax({

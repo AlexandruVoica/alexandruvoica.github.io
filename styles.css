@@ -463,7 +463,7 @@ textarea {
   margin: 0 0 5px 0;
 }
 
-@media (max-width: 950px) {
+/* @media (max-width: 950px) {
   body,
   html {
     height: auto;
@@ -504,4 +504,4 @@ textarea {
   .app_footer button {
     visibility: none;
   }  
-}
+} */
