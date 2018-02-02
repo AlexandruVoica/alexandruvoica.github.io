@@ -22,9 +22,8 @@ var isGalleryEmpty = true;
 var galleryCanvasStored = '';
 // Global variable that holds if the current canvas is saved in the gallery in case of a reconstruction
 var continueWithDeletingCurrentCanvas = true;
-// Global varaibles that change the way in which the representation of swatches behaves
+// Global varaibles that holds the swatches container
 const swatches = $('.swatches');
-var isSwatchesEmpty = true;
 // Global variable that holds the visibility of the textarea necessary for importing
 var isTextareaVisible = false;
 
@@ -35,12 +34,7 @@ $(colorPicker).change(function(event) {
   $('#colorString').css('background-color', selectedColor);
   // Once changed, add color to swatches
   let currentSwatchSlot = $('.swatch_slot')[0];
-  if (isSwatchesEmpty === false) {
-    shiftRepresentation(swatches);
-  } else {
-    isSwatchesEmpty = false;
-    $(currentSwatchSlot).children().remove();
-  }
+  shiftRepresentation(swatches);
   $(currentSwatchSlot).append('<div class="swatch_color"></div>');
   $(currentSwatchSlot).children('.swatch_color').css('background-color', selectedColor);
 });
@@ -340,7 +334,7 @@ function shiftRepresentation(container) {
       $(containerSlots[index]).append($(containerSlots[index-1]).contents());
     }
   }
-}
+};
 
 
 $('.save_slot').on('click', function(event) {
@@ -358,12 +352,12 @@ function reconstructCanvas() {
     initializeCanvas();
     parseStringToCanvas(string, mainCanvas);
   }
-}
+};
 
 $('.yes').on('click', function(event) {
   continueWithDeletingCurrentCanvas = true;
   reconstructCanvas();
-})
+});
 
 // Export canvas by generating a string
 $('#export_button').on('click', function(event) {
@@ -455,6 +449,24 @@ getTxt = function (){
       $('.text_js').text(data);
     }
   });
+  $.ajax({
+    url:'style.css',
+    success: function (data){
+      $('.text_css').text(data);
+    }
+  });
+  $.ajax({
+    url:'design.js',
+    success: function (data){
+      $('.text_js').text(data);
+    }
+  });
 }
 
 $('.buttoncode').click(getTxt);
+
+// $('.buttoncode').click(function (event) {
+//   debugger;
+//   event.preventDefault();
+//   $('.text_code').css('visibility', 'visible');
+// });

@@ -50,9 +50,9 @@
 <div class="popup text_code">
   <div class="popup_container">
     <div class="popup_main">
-      <p class="text_html"></p>
-      <p class="text_css"></p>
-      <p class="text_js"></p>
+      <pre class="text_html prettyprint"></pre>
+      <pre class="text_css prettyprint"></pre>
+      <pre class="text_js prettyprint"></pre>
     </div>
     <button type="button" class="close" name="proceed">Close</button>
   </div>
@@ -74,7 +74,7 @@
       <input type="color" id="colorPicker">
       <div class="swatches">
         <div class="swatch_slot">
-          <div class="swatch_color"></div>
+          <div class="swatch_color" style="background-color: #000000"></div>
         </div>
         <div class="swatch_slot">
           <div class="swatch_color"></div>
@@ -176,12 +176,12 @@
   </div>
   <div class="app_footer">
     <p>This application was built by <span id="name">Alexandru Voica</span> during the Udacity Front-End Developer Scholarship Challenge.</p>
+    
     <button class="buttoncode" type="button" name="buttoncode">Show code</button>
   </div>
 </div>
-<!-- 
-<textarea class="show_code"></textarea> -->
-  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-  <script src="designs.js"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="designs.js"></script>
+<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 </body>
 </html>

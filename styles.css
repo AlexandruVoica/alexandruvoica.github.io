@@ -100,18 +100,40 @@ button {
 
 .text_code {
   visibility: hidden;
+  display: flex;
+  height: 100%;
+}
+
+.text_code .popup_container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  box-shadow: none;
 }
 
 .text_code .popup_main {
+  flex: 1;
   display: flex;
   flex-direction: row;
+  justify-content: space-evenly;
+  width: auto;
+  box-shadow: 10px 10px 30px 1px rgba(40, 40, 40, 1);
 }
 
 .text_code .popup_main p {
+  flex: 0 1 350px;
   width: 350px;
-  flex: 1;
+  height: 85vh;
   overflow: auto;
+  text-align: justify;
+  border: 1px solid darkgray;
+  margin: 0 10px;
 }
+
+.text_code .popup_container button {
+  margin: 20px 0 0 0;
+  flex: 1;
+} 
 
 #name {
   text-decoration: underline;
