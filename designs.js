@@ -444,19 +444,19 @@ getTxt = function (){
   $.ajax({
     url:'index.html',
     success: function (data){
-      $('.text_html').html(data);
+      $('.text_html').text(data);
     }
   });
   $.ajax({
-    url:'style.css',
+    url:'styles.css',
     success: function (data){
-      $('.text_css').html(data);
+      $('.text_css').text(data);
     }
   });
   $.ajax({
-    url:'design.js',
+    url:'designs.js',
     success: function (data){
-      $('.text_js').html(data);
+      $('.text_js').text(data);
     }
   });
 }
