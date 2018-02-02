@@ -120,7 +120,7 @@ button {
   box-shadow: 10px 10px 30px 1px rgba(40, 40, 40, 1);
 }
 
-.text_code .popup_main code {
+.text_code .popup_main xmp {
   flex: 0 1 350px;
   max-width: 350px;
   height: 85vh;
