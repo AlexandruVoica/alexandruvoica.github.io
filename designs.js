@@ -446,7 +446,7 @@ getTxt = function (){
     success: function (data){
       // Code snippet adapted and borrowed from Mike Byrne https://codepen.io/13twelve/pen/vEYgzr
       let target = $('.text_html');
-      let sample_html = data.outerHTML;
+      let sample_html = data;
       let white_space = "☺";
       // find how many spaces are before the part of the html
       try {
