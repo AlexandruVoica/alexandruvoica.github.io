@@ -442,21 +442,21 @@ $('#save_functionality').on('click', 'textarea', function(event) {
 getTxt = function (){
   $('.text_code').css('visibility', 'visible');
   $.ajax({
-    url:'text/html.txt',
+    url:'index.html',
     success: function (data){
-      $('.text_html').text(data);
+      $('.text_html').html(data);
     }
   });
   $.ajax({
-    url:'text/css.txt',
+    url:'styles.css',
     success: function (data){
-      $('.text_css').text(data);
+      $('.text_css').html(data);
     }
   });
   $.ajax({
-    url:'text/js.txt',
+    url:'designs.js',
     success: function (data){
-      $('.text_js').text(data);
+      $('.text_js').html(data);
     }
   });
 }
