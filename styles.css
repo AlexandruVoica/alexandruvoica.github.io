@@ -1,3 +1,7 @@
+@-ms-viewport{
+  width: device-width;
+}
+
 body,
 html {
   height: 100%;
@@ -11,7 +15,7 @@ html {
   flex-direction: column;
 }
 
-.welcome {
+.popup {
   height: 100%;
   width: 100%;
   background: rgba(20, 20, 20, 0.8);
@@ -25,7 +29,7 @@ html {
   align-items: center;
 }
 
-.welcome_container {
+.popup_container {
   align-self: center;
   z-index: 10;
   display: flex;
@@ -35,14 +39,14 @@ html {
   box-shadow: 10px 10px 30px 1px rgba(40, 40, 40, 1);
 }
 
-.welcome_main,
-.welcome_footer {
+.popup_main,
+.popup_footer {
   /* font-family: Open Sans, sans-serif; */
   z-index: 11;
   width: 500px;
 }
 
-.welcome_main {
+.popup_main {
   font-size: 16px;
   font-family: 'Open Sans', sans-serif;
   padding: 15px 15px 8px 15px;
@@ -50,7 +54,7 @@ html {
   background: rgba(255, 255, 255, 1);
 }
 
-.welcome_footer {
+.popup_footer {
   font-size: 13px;
   font-family: 'Open Sans', sans-serif;
   color: rgba(255, 255, 255, 1);
@@ -60,13 +64,53 @@ html {
   background: linear-gradient(50deg, #7eb4c4, rgba(40, 40, 40, 1));
 }
 
-div.welcome p {
+div.popup p {
   margin: 0;
   line-height: 1.5;
 }
 
 button {
   margin-top: 20px;
+}
+
+.not_saved {
+  visibility: hidden;
+  text-align: center;
+}
+
+.not_saved .popup_container {
+  width: 300px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+  box-shadow: none;
+}
+
+.not_saved .popup_main {
+  width: 300px;
+  padding: 15px;
+  flex: 1 0 300px;
+  box-shadow: 10px 10px 30px 1px rgba(40, 40, 40, 1);
+}
+
+.not_saved .popup_container button {
+  width: 50px;
+}
+
+.text_code {
+  visibility: hidden;
+}
+
+.text_code .popup_main {
+  display: flex;
+  flex-direction: row;
+}
+
+.text_code .popup_main p {
+  width: 350px;
+  flex: 1;
+  overflow: auto;
 }
 
 #name {
@@ -95,6 +139,31 @@ button {
   margin: 15px 0 15px 15px;
   cursor: default;
   font-family: 'Open Sans', sans-serif;
+}
+
+.swatches {
+  margin: 5px 0 0 0;
+  width: 200px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.swatch_slot {
+  flex: 0 0 25px;
+  height: 25px;
+  box-sizing: border-box;
+  border: 1px solid rgb(88, 88, 88);
+  display: flex;
+}
+
+.swatch_slot:hover {
+  border: 2px solid black;
+}
+
+.swatch_color {
+  flex: 1;
+  background-color: #FFFFFF;
 }
 
 .canvas_space {

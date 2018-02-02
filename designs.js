@@ -1,27 +1,48 @@
 $('button').click(function (event) {
   event.preventDefault();
-  $('.welcome').css('visibility', 'hidden');
+  $('.popup').css('visibility', 'hidden');
 });
 
 // Global variables declaration
 // By default, start with the color black
+const colorPicker = $('#colorPicker');
 var selectedColor = '#000000';
 // By default, start with a height and width of 0
 var gridHeight = 0;
 var gridWidth = 0;
-var mainCanvas = $('#pixel_canvas');
+const mainCanvas = $('#pixel_canvas');
 // Global variable that will hold the index of the array that stores all the cells that have been changed during one action
 var undoActionIndex = 0;
 var undoCellIndex = 0;
 var undo = [[]];
-
+// Global variables that change the way in which the gallery saving function behaves
+const gallery = $('.gallery');
 var isGalleryEmpty = true;
+// Global variable that holds the canvas of the gallery slot that was clicked
+var galleryCanvasStored = '';
+// Global variable that holds if the current canvas is saved in the gallery in case of a reconstruction
+var continueWithDeletingCurrentCanvas = true;
+// Global varaibles that change the way in which the representation of swatches behaves
+const swatches = $('.swatches');
+var isSwatchesEmpty = true;
+// Global variable that holds the visibility of the textarea necessary for importing
+var isTextareaVisible = false;
 
 // Select color event listener
-$('#colorPicker').change(function(event) {
+$(colorPicker).change(function(event) {
   selectedColor = event.target.value;
   $('#colorString').text(selectedColor.toUpperCase());
-  $('#colorString').css('background', selectedColor);
+  $('#colorString').css('background-color', selectedColor);
+  // Once changed, add color to swatches
+  let currentSwatchSlot = $('.swatch_slot')[0];
+  if (isSwatchesEmpty === false) {
+    shiftRepresentation(swatches);
+  } else {
+    isSwatchesEmpty = false;
+    $(currentSwatchSlot).children().remove();
+  }
+  $(currentSwatchSlot).append('<div class="swatch_color"></div>');
+  $(currentSwatchSlot).children('.swatch_color').css('background-color', selectedColor);
 });
 
 // When size is submitted by the user, call makeGrid()
@@ -30,7 +51,7 @@ $('#submit_button').click(function(event) {
   gridHeight = $('#input_height').val();
   gridWidth = $('#input_width').val();
   // Check if dimensions are not too big
-  if (gridHeight > 45 || gridHeight > 45)  {
+  if (gridHeight > 45 || gridWidth > 45)  {
     // Delete previous canvas
     $('#canvas_header').remove();
     // Delete previous canvas 
@@ -44,6 +65,41 @@ $('#submit_button').click(function(event) {
   makeGrid();
 });
 
+$('.swatch_slot').on('click', function(event) {
+  let swatchColor = $(this).children('.swatch_color').css('background-color');
+  let convertedSwatchColor = convertRGBToHex(swatchColor);
+  selectedColor = convertedSwatchColor;
+  $(colorPicker).val(selectedColor);
+  $('#colorString').text(selectedColor.toUpperCase());
+  $('#colorString').css('background-color', selectedColor);
+});
+
+// Snippet taken from http://wowmotty.blogspot.ro/2017/05/convert-rgba-output-to-hex-color.html
+function convertRGBToHex(orig) {
+  var a, isPercent,
+    rgb = orig.replace(/\s/g, '').match(/^rgba?\((\d+),(\d+),(\d+),?([^,\s)]+)?/i),
+    alpha = (rgb && rgb[4] || "").trim(),
+    hex = rgb ? "#" +
+    (rgb[1] | 1 << 8).toString(16).slice(1) +
+    (rgb[2] | 1 << 8).toString(16).slice(1) +
+    (rgb[3] | 1 << 8).toString(16).slice(1) : orig;
+  if (alpha !== "") {
+    isPercent = alpha.indexOf("%") > -1;
+    a = parseFloat(alpha);
+    if (!isPercent && a >= 0 && a <= 1) {
+      a = Math.round(255 * a);
+    } else if (isPercent && a >= 0 && a <= 100) {
+      a = Math.round(255 * a / 100)
+    } else {
+      a = "";
+    }
+  }
+  if (a) {
+    hex += (a | 1 << 8).toString(16).slice(1);
+  }
+  return hex;
+}
+
 function makeGrid() {
   initializeCanvas();
   constructCanvas(mainCanvas, gridHeight, gridWidth);
@@ -52,16 +108,12 @@ function makeGrid() {
 function initializeCanvas () {
   // Delete previous canvas in case function is called multiple times
   $(mainCanvas).children().remove();
-  // Delete previous .cell_position element in case function is called multiple times
-  $('.cell_position').remove();
   // Reset visual cues for active tool
   $('.tool_icon').removeClass('active');
   // After canvas is created export button becomes available
   $('#export_button').removeAttr('disabled');
   // After canvas is created, remove canvas space header
   $('#canvas_header').remove();
-  // After canvas is created create .cell_position element
-  $('#toolbox').children('h2').after('<p class="cell_position">0 x 0</p>')
   // Visual cues for paintbrush active
   $('.tool_icon[alt="Paint brush"]').toggleClass('active');
   // Initialize cursor when canvas was created
@@ -81,6 +133,9 @@ $(mainCanvas).on('mousedown', 'td', function(event) {
   // Mouse was clicked, make dragging possible
   dragging = true;
   useTool(event.target, selectedColor, $('.active').attr('alt'));
+  if (isGalleryEmpty === false) {
+    continueWithDeletingCurrentCanvas = false;
+  }
 });
 
 // Event listener for releasing mouse
@@ -262,9 +317,10 @@ $('.tool_icon[alt="Undo"]').on('click', function(event) {
 
 // Event listener for saving a canvas in the gallery
 $('.tool_icon[alt="Gallery"]').on('click', function() {
+  continueWithDeletingCurrentCanvas = true;
   let currentGallerySlot = $('.save_slot')[0];
   if (isGalleryEmpty === false) {
-    shiftRepresentation($('.gallery'));
+    shiftRepresentation(gallery);
   } else {
     isGalleryEmpty = false;
     $(currentGallerySlot).children().remove();
@@ -286,13 +342,28 @@ function shiftRepresentation(container) {
   }
 }
 
+
 $('.save_slot').on('click', function(event) {
-  debugger;
-  let galleryCanvas = $(this).children('table');
-  let string = convertCanvasToString(galleryCanvas);
-  initializeCanvas();
-  parseStringToCanvas(string, mainCanvas);
+    galleryCanvasStored = $(this).children('table');
+    if (Array.from($(galleryCanvasStored).children()).length !== 0) {
+      reconstructCanvas();
+    }
 });
+
+function reconstructCanvas() {
+  if (continueWithDeletingCurrentCanvas === false) {
+    $('.not_saved').css('visibility', 'visible');
+  } else {
+    let string = convertCanvasToString(galleryCanvasStored);
+    initializeCanvas();
+    parseStringToCanvas(string, mainCanvas);
+  }
+}
+
+$('.yes').on('click', function(event) {
+  continueWithDeletingCurrentCanvas = true;
+  reconstructCanvas();
+})
 
 // Export canvas by generating a string
 $('#export_button').on('click', function(event) {
@@ -322,7 +393,6 @@ function convertCanvasToString (canvas) {
 }
 
 // Import canvas by parsing a string
-var isTextareaVisible = false;
 $('#import_button').on('click', function(event) {
   event.preventDefault();
   if (isTextareaVisible === false) {
@@ -376,10 +446,13 @@ $('#save_functionality').on('click', 'textarea', function(event) {
 });
 
 getTxt = function (){
+  $('.text_code').css('visibility', 'visible');
   $.ajax({
-    url:'text/html.txt',
+    url:'index.html',
     success: function (data){
-      $('.show_code').text(data);
+      $('.text_html').text(data);
+      $('.text_css').text(data);
+      $('.text_js').text(data);
     }
   });
 }
