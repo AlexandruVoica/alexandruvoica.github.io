@@ -447,7 +447,7 @@ getTxt = function (){
       let dataHTML = '';
       let target = $('.text_html');
       dataHTML = data.replace(/</g,"&lt;").replace(/>/g,"&gt;").toString();
-      dataHTML = $.trim(sample_html);
+      dataHTML = $.trim(dataHTML);
       target.html(sample_html);
     }
   });
